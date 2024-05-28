@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <conio.h>
+#include <string>
 
 const int MAX = 10;
 
@@ -182,6 +183,12 @@ public:
 
 	~Car();
 
+	void setBrand(string s);
+
+	void setModel(string s);
+
+	void setNomer(string s);
+
 	string getBrand();
 
 	string getModel();
@@ -211,3 +218,5 @@ void DeleteCar(Car* cars, int& count);
 void DeleteFoodstuff(Foodstuff foods[], int& count);
 
 void DeleteFurniture(Furniture furniture[], int& count);
+
+void controlReg(string& str);

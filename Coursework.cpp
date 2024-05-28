@@ -57,7 +57,7 @@ int main()
 			}
 			else if (var == 0)
 			{
-				break;
+				continue;
 			}
 		}
 		else if (choise == 2)
@@ -87,7 +87,7 @@ int main()
 			}
 			else if (var == 0)
 			{
-				break;
+				continue;
 			}
 		}
 		else if (choise == 3)
@@ -126,8 +126,8 @@ int main()
 		}
 		
 		all_cnt++;
-		cout << "Clean screen\n";
-		if (_getch() == '\n')
+		cout << "Для очистки экрана (с)\n";
+		if (_getch() == 'c')
 		{
 			system("cls");
 		}
@@ -169,7 +169,6 @@ static int SubMenu()
 	}
 	return choise;
 }
-
 
 template <typename T>
 void catalog(T obj, int length)

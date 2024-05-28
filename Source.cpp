@@ -45,27 +45,35 @@ int Product::GetCnt() const
 
 istream& operator>>(istream& in, Date& obj)
 {
-	cout << "(формат дд:мм:гггг)\t";
-
-	// Временные переменные для хранения введенных значений
-	int tempDD, tempMM, tempGG;
-
-	// Считываем введенные значения в временные переменные
-	in >> tempDD >> tempMM >> tempGG;
-
-	// Проверяем корректность введенных данных
-	if (tempDD < 1 || tempDD > 31 || tempMM < 1 || tempMM > 12 || tempGG < 1950)
+	bool validInput = false;
+	while (!validInput)
 	{
-		cout << "Некорректные данные. Попробуйте еще раз." << endl;
-		in.clear(); // Очищаем флаги потока
-		in.ignore(numeric_limits<streamsize>::max(), '\n'); // Сбрасываем буфер ввода
-		return in;
-	}
+		cout << "(формат дд:мм:гггг)\t";
 
-	// Если данные корректны, то записываем их в члены класса
-	obj.dd = tempDD;
-	obj.mm = tempMM;
-	obj.gg = tempGG;
+		int tempDD, tempMM, tempGG;
+
+		// Считываем введенные значения в временные переменные
+		if (!(in >> tempDD >> tempMM >> tempGG))
+		{
+			cout << "Некорректный ввод. Попробуйте еще раз." << endl;
+			in.clear(); // Очищаем флаги потока
+			in.ignore(numeric_limits<streamsize>::max(), '\n'); // Сбрасываем буфер ввода
+			continue; // Переходим к началу цикла
+		}
+
+		// Проверяем корректность введенных данных
+		if (tempDD < 1 || tempDD > 31 || tempMM < 1 || tempMM > 12 || tempGG < 1900)
+		{
+			cout << "Некорректные данные. Попробуйте еще раз." << endl;
+			continue; 
+		}
+
+		// Если данные корректны, то записываем их в члены класса
+		obj.dd = tempDD;
+		obj.mm = tempMM;
+		obj.gg = tempGG;
+		validInput = true;
+	}
 
 	return in;
 }
@@ -82,12 +90,14 @@ ostream& operator<<(ostream& out, const Date& obj)
 
 istream& operator>>(istream& in, Foodstuff& obj)
 {
-	cout << "Введите категорию товара(0 - рыба, 1 - мясо, 2 - молоко, 3 - хлебобулочные изделия";
+	cout << "Введите категорию товара(0 - рыба, 1 - мясо, 2 - молоко, 3 - хлебобулочные изделия\t";
 	in >> obj.num_categ;
 
+	in.ignore(numeric_limits<streamsize>::max(), '\n');
+	
 	cout << "Введите название производителя\t";
-	//in >> obj.brand;
 	getline(in, obj.brand);
+	controlReg(obj.brand);
 
 	cout << "Введите дату поступления\t";
 	in >> obj.Delivery;
@@ -135,12 +145,16 @@ ostream& operator<<(ostream& out, const Foodstuff& obj)
 
 istream& operator>>(istream& in, Furniture& obj)
 {
+	/// Очистка буфера
+	in.ignore(numeric_limits<streamsize>::max(), '\n');
+
 	cout << "Введите марку мебели:\t";
 	getline(in, obj.brand);
-	//in >> obj.brand;
+	controlReg(obj.brand);
 
 	cout << "Введите модель мебели:\t";
 	getline(in, obj.name);
+	controlReg(obj.name);
 
 	cout << "Введите дату поступления:\t";
 	in >> obj.Delivery;
@@ -170,16 +184,22 @@ ostream& operator<<(ostream& out, const Furniture& obj)
 
 istream& operator>>(istream& in, Car& obj)
 {
+	in.ignore(numeric_limits<streamsize>::max(), '\n');
+	
 	cout << "Введите марку автомобиля\t";
 	getline(in, obj.brand);
-	//in >> obj.brand;
+	controlReg(obj.brand);
 
 	cout << "Введите модель автомобиля\t";
-	getline(in, obj.model, '\n');
-	//in >> obj.model;
+	getline(in, obj.model);
+	controlReg(obj.model);
 
 	cout << "Введите государственный номер автомобиля\t";
 	getline(in, obj.gos_nomer);
+	for (char& ch : obj.gos_nomer)
+	{
+		ch = toupper(ch);
+	}
 
 	cout << "Введите дату поступления\t";
 	in >> obj.Delivery;
@@ -201,7 +221,7 @@ ostream& operator<<(ostream& out, const Car& obj)
 {
 	out << "Марка автомобиля:\t" << obj.brand << endl;
 	out << "Модель автомобиля:\t" << obj.model << endl;
-	out << "Цена автомобиля:\t" << fixed << setprecision(12) << obj.price << endl;
+	out << "Цена автомобиля:\t" << setprecision(8) << obj.price << endl;
 	out << "Количество автомобилей:\t" << obj.count << endl;
 	out << "Дата поступления:\t" << obj.Delivery << endl;
 	out << "Дата продажи:\t" << obj.Sale << endl;
@@ -302,6 +322,21 @@ Car::Car(string b, string m) : brand(b), model(m)
 
 Car::~Car()
 {
+}
+
+void Car::setBrand(string s)
+{
+	this->brand = s;
+}
+
+void Car::setModel(string s)
+{
+	this->model = s;
+}
+
+void Car::setNomer(string s)
+{
+	this->gos_nomer = s;
 }
 
 string Car::getBrand()
@@ -434,4 +469,19 @@ void DeleteFurniture(Furniture furniture[], int& count)
 	}
 	count--;
 	cout << "Мебель успешно удалена." << endl;
+}
+
+void controlReg(string& str)
+{
+	int cnt = 0;
+	for (char &ch : str)
+	{
+		if (cnt++ == 0)
+		{
+			ch = toupper(ch);
+		}
+		else {
+			ch = tolower(ch);
+		}
+	}
 }
